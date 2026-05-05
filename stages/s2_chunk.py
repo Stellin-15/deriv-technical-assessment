@@ -22,13 +22,11 @@ def url_to_slug(url: str) -> str:
 
 
 def extract_section_title(words_before: list, page_title: str) -> str:
-    # Scan backwards through preceding words looking for a heading-like line.
-    # Headings are typically short (≤8 words) and may be title-cased.
     text_before = " ".join(words_before[-100:]) if words_before else ""
     lines = [l.strip() for l in text_before.split("\n") if l.strip()]
     for line in reversed(lines):
         word_count = len(line.split())
-        if 1 <= word_count <= 10 and not line.endswith((".","?","!")):
+        if 1 <= word_count <= 10 and not line.endswith((".", "?", "!")):
             return line
     return page_title
 
@@ -44,7 +42,6 @@ def chunk_text(text: str, slug: str, source_url: str) -> list:
         chunk_words = words[start:end]
 
         if len(chunk_words) < CHUNK_MIN and chunks:
-            # Absorb remainder into last chunk if it's too small.
             last = chunks[-1]
             last["text"] = last["text"] + " " + " ".join(chunk_words)
             last["token_count"] = len(last["text"].split())

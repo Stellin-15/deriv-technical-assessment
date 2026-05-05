@@ -42,7 +42,6 @@ def scrape_url_playwright(url: str) -> dict:
                 print(f"  [FAIL] {url} — HTTP {resp.status}")
                 return result
 
-            # Wait for JS-rendered content then allow extra time for full render
             for sel in ["[class*='accordion']", "main", "article", "body"]:
                 try:
                     page.wait_for_selector(sel, timeout=12000)
@@ -50,7 +49,7 @@ def scrape_url_playwright(url: str) -> dict:
                 except Exception:
                     continue
 
-            # Extra settle time — JS frameworks batch-render DOM nodes
+            # Extra settle time for full DOM render
             time.sleep(2)
 
             # Extract accordion Q&A blocks (primary content on Deriv help pages)
@@ -63,7 +62,6 @@ def scrape_url_playwright(url: str) -> dict:
                         texts.append(t)
                 raw = "\n\n".join(texts)
             else:
-                # Fallback: try main/article, then full body
                 raw = ""
                 for sel in ["main", "article", "body"]:
                     el = page.query_selector(sel)
