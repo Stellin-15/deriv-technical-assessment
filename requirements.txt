@@ -1,0 +1,7 @@
+anthropic
+python-dotenv
+requests
+beautifulsoup4
+sentence-transformers
+numpy
+playwright
