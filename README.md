@@ -101,6 +101,24 @@ All artifacts are regenerated on each `python pipeline.py` run:
     └── s11_audit.py         audit export
 ```
 
+## Known Issues / Source URL Notes
+
+The sample `sources.json` provided in the assessment spec contained a broken URL:
+
+```
+https://deriv.com/help-centre/accounts/   ← returns HTTP 404
+```
+
+The correct working URL is:
+
+```
+https://deriv.com/help-centre/account/    ← singular, returns 200
+```
+
+This has been corrected in `sources.json`. The pipeline logs all scraping failures with `success: false` in `scraped_content.json` and continues gracefully — it does not crash on 404 URLs.
+
+Additionally, Deriv's help pages are **JavaScript-rendered (React)**. Plain `requests` + BeautifulSoup only extracts ~38 characters of visible text. The scraper uses **Playwright** (headless Chromium) to fully render the page before extracting content, which correctly retrieves 14,000–41,000 characters per page.
+
 ## Key Design Decisions
 
 - **Playwright** over requests — Deriv's help pages are JavaScript-rendered (React)
