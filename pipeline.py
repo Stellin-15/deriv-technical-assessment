@@ -16,8 +16,19 @@ def state(name: str):
     print(f"{'='*60}")
 
 
+def _init_artifacts():
+    """Ensure artifact files always exist even if all queries trigger fallback."""
+    for path in ["generated_answers.json", "grounding_verification.json",
+                 "answer_quality_scores.json"]:
+        import os
+        if not os.path.exists(path):
+            with open(path, "w") as f:
+                json.dump([], f)
+
+
 def run():
     try:
+        _init_artifacts()
         state("INIT")
 
         # ── Stage 1: Load sources ──────────────────────────────────
